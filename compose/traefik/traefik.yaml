@@ -23,7 +23,7 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`example.com`)"
+      rule: "Host(`bookwormtest.pennds.org`)"
       entryPoints:
         - web
       middlewares:
@@ -32,7 +32,7 @@ http:
       service: bookworm
 
     web-secure-router:
-      rule: "Host(`example.com`)"
+      rule: "Host(`bookwormtest.pennds.org`)"
       entryPoints:
         - web-secure
       middlewares:
@@ -42,9 +42,9 @@ http:
         # https://docs.traefik.io/master/routing/routers/#certresolver
         certResolver: letsencrypt
         domains:
-          - main: "example.com"
+          - main: "bookwormtest.pennds.org"
             sans:
-              - "*.example.com"
+              - "*.bookwormtest.pennds.org"
 
   middlewares:
     redirect:
