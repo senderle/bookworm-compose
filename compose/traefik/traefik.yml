@@ -14,7 +14,7 @@ certificatesResolvers:
   letsencrypt:
     # https://docs.traefik.io/master/https/acme/#lets-encrypt
     acme:
-      email: mail@example.com
+      email: scott.enderle@gmail.com
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
       httpChallenge:
@@ -29,10 +29,20 @@ http:
       middlewares:
         - redirect
         - csrf
-      service: bookworm
+      service: nginx
 
     web-secure-router:
       rule: "Host(`bookwormtest.pennds.org`)"
+      entryPoints:
+        - web-secure
+      middlewares:
+        - csrf
+      service: nginx
+      tls:
+        certResolver: letsencrypt
+
+    web-secure-api-router:
+      rule: "(Host(`bookwormtest.pennds.org`) && PathPrefix(`/cgi-bin`))"
       entryPoints:
         - web-secure
       middlewares:
@@ -41,10 +51,6 @@ http:
       tls:
         # https://docs.traefik.io/master/routing/routers/#certresolver
         certResolver: letsencrypt
-        domains:
-          - main: "bookwormtest.pennds.org"
-            sans:
-              - "*.bookwormtest.pennds.org"
 
   middlewares:
     redirect:
@@ -63,9 +69,13 @@ http:
       loadBalancer:
         servers:
           - url: http://bookworm:10012
+    nginx:
+      loadBalancer:
+        servers:
+          - url: http://nginx:80
 
 providers:
   # https://docs.traefik.io/master/providers/file/
   file:
-    filename: /etc/traefik/traefik.yaml
+    filename: /etc/traefik/traefik.yml
     watch: true

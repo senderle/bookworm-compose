@@ -12,11 +12,15 @@ services:
       context: .
       dockerfile: ./compose/traefik/Dockerfile
     image: traefik
+    depends_on:
+      - bookworm
+      - nginx
     volumes:
       - traefik_certs:/etc/traefik/acme
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
+    command: traefik
 
   nginx:
     image: nginx:latest
@@ -36,4 +40,4 @@ services:
       dockerfile: ./compose/bookworm/Dockerfile
     volumes:
       - ./corpus:/corpus
-    command: python bookworm/bookworm.py
+    command: gunicorn --bind 0.0.0.0:10012 bookworm:app
