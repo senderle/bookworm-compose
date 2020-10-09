@@ -40,4 +40,4 @@ services:
       dockerfile: ./compose/bookworm/Dockerfile
     volumes:
       - ./corpus:/corpus
-    command: gunicorn --bind 0.0.0.0:10012 bookworm:app
+    command: bookworm serve
