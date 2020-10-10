@@ -40,6 +40,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
+    depends_on: 
+      - mariadb
     volumes:
       - ./corpus:/corpus
     command: bookworm serve

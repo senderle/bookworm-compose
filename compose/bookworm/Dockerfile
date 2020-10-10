@@ -1,6 +1,19 @@
-FROM python:3.9-buster
+FROM python:3.8-slim
 
 WORKDIR /usr/src/app
 
-COPY bookworm/BookwormDB .
-RUN cd BookwormDB & pip install .
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        python3-dev \
+        libmariadbclient-dev \
+        wget \
+        unzip
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
+    && unzip master.zip \
+    && cd BookwormDB-master \
+    && pip install . .
