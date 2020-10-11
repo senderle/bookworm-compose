@@ -26,13 +26,15 @@ services:
     image: nginx:latest
     volumes:
       - ./serve:/usr/share/nginx/html/
+      # Does this work?
+      - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
 
   mariadb:
     image: mariadb:latest
     volumes:
       - mysql_data:/var/lib/mysql
-    env_file:
-      - ./.envs/.production/.mariadb
+#    env_file:
+#      - ./.envs/.production/.mariadb
 
   bookworm:
     build:
