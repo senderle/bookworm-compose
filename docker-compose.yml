@@ -33,15 +33,20 @@ services:
     image: mariadb:latest
     volumes:
       - mysql_data:/var/lib/mysql
-#    env_file:
-#      - ./.envs/.production/.mariadb
+    environment:
+      # Override this in docker-compose-override.yml
+      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
 
   bookworm:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
-    depends_on: 
+    environment:
+      # Override this in docker-compose-override.yml
+      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
+    depends_on:
       - mariadb
     volumes:
       - ./corpus:/corpus
-    command: bookworm serve
+    command:
+      - bookworm serve
