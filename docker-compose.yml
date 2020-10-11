@@ -14,7 +14,7 @@ services:
       - "--providers.docker=true"
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
-      # Override this in docker-compose-override.yml
+      # Override this in docker-compose.override.yml
       - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
       - "--certificatesResolvers.le.acme.storage=acme.json"
       - "--certificatesResolvers.le.acme.tlsChallenge=true"
@@ -26,6 +26,7 @@ services:
       - "0.0.0.0:443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - traefik_certs:/etc/traefik/acme
       - ./compose/traefik/acme.json:/acme.json
     labels:
       # Redirect all HTTP to HTTPS permanently
@@ -45,8 +46,8 @@ services:
       # Does this work?
       - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
     labels:
-      # Override this in docker-compose-override.yml
-      - traefik.http.routers.whoami.rule=Host(`<YOUR_DOMAIN_NAME>`)
+      # Override this in docker-compose.override.yml
+      - traefik.http.routers.whoami.rule=Host(`<YOUR_HOSTNAME>`)
       - traefik.http.routers.whoami.tls=true
       - traefik.http.routers.whoami.tls.certresolver=le
 
@@ -55,7 +56,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
-      # Override this in docker-compose-override.yml
+      # Override this in docker-compose.override.yml
       - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
 
   bookworm:
@@ -63,16 +64,16 @@ services:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
     environment:
-      # Override this in docker-compose-override.yml
+      # Override this in docker-compose.override.yml
       - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
     depends_on:
       - mariadb
     volumes:
       - ./corpus:/corpus
-    command:
-      - bookworm serve
+    # command: bookworm serve 
+    command: gunicorn --bind 0.0.0.0:10012 bookworm:app
     labels:
-      # Override this in docker-compose-override.yml
+      # Override this in docker-compose.override.yml
       - traefik.http.routers.whoami.rule=Host(`<YOUR_DOMAIN_NAME>`) && PathPrefix(`/cgi-bin`)
       - traefik.http.routers.whoami.tls=true
       - traefik.http.routers.whoami.tls.certresolver=le

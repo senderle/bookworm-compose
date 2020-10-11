@@ -2,3 +2,4 @@ numpy
 pandas
 gunicorn
 bounter
+flask
