@@ -8,19 +8,35 @@ volumes:
 services:
 
   traefik:
-    build:
-      context: .
-      dockerfile: ./compose/traefik/Dockerfile
-    image: traefik
-    depends_on:
-      - bookworm
-      - nginx
-    volumes:
-      - traefik_certs:/etc/traefik/acme
+    image: traefik:latest
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      # Override this in docker-compose-override.yml
+      - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
+      - "--certificatesResolvers.le.acme.storage=acme.json"
+      - "--certificatesResolvers.le.acme.tlsChallenge=true"
+      - "--certificatesResolvers.le.acme.httpChallenge=true"
+      - "--certificatesResolvers.le.acme.httpChallenge.entryPoint=web"
+    restart: always
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
-    command: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./acme.json:/acme.json
+    labels:
+      # Redirect all HTTP to HTTPS permanently
+      - traefik.http.routers.http_catchall.rule=HostRegexp(`{any:.+}`)
+      - traefik.http.routers.http_catchall.entrypoints=web
+      - traefik.http.routers.http_catchall.middlewares=https_redirect
+      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https_redirect.redirectscheme.permanent=true
+    depends_on:
+      - bookworm
+      - nginx
 
   nginx:
     image: nginx:latest
@@ -28,6 +44,11 @@ services:
       - ./serve:/usr/share/nginx/html/
       # Does this work?
       - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
+    labels:
+      # Override this in docker-compose-override.yml
+      - traefik.http.routers.whoami.rule=Host(`<YOUR_DOMAIN_NAME>`)
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.tls.certresolver=le
 
   mariadb:
     image: mariadb:latest
@@ -50,3 +71,8 @@ services:
       - ./corpus:/corpus
     command:
       - bookworm serve
+    labels:
+      # Override this in docker-compose-override.yml
+      - traefik.http.routers.whoami.rule=Host(`<YOUR_DOMAIN_NAME>`) && PathPrefix(`/cgi-bin`)
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.tls.certresolver=le
