@@ -14,8 +14,8 @@ services:
       - "--providers.docker=true"
       - "--entryPoints.web.address=:80"
       - "--entryPoints.websecure.address=:443"
-      # Override this in docker-compose.override.yml
-      - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
+      # Put this in docker-compose.override.yml, with your email
+      # - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
       - "--certificatesResolvers.le.acme.storage=acme.json"
       - "--certificatesResolvers.le.acme.tlsChallenge=true"
       - "--certificatesResolvers.le.acme.httpChallenge=true"
@@ -46,26 +46,26 @@ services:
       # Does this work?
       - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
     labels:
-      # Override this in docker-compose.override.yml
-      - traefik.http.routers.whoami.rule=Host(`<YOUR_HOSTNAME>`)
-      - traefik.http.routers.whoami.tls=true
-      - traefik.http.routers.whoami.tls.certresolver=le
+      # Put this in docker-compose.override.yml, with the correct domain
+      # - traefik.http.routers.nginx.rule=Host(`<YOUR_DOMAIN>`)
+      - traefik.http.routers.nginx.tls=true
+      - traefik.http.routers.nginx.tls.certresolver=le
 
   mariadb:
     image: mariadb:latest
     volumes:
       - mysql_data:/var/lib/mysql
-    environment:
-      # Override this in docker-compose.override.yml
-      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
+    environment: []
+      # Put this in docker-compose.override.yml, with a secure password
+      # - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
 
   bookworm:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
-    environment:
-      # Override this in docker-compose.override.yml
-      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
+    environment: []
+      # Put this in docker-compose.override.yml, with a secure password
+      # - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
     depends_on:
       - mariadb
     volumes:
@@ -73,7 +73,8 @@ services:
     # command: bookworm serve 
     command: gunicorn --bind 0.0.0.0:10012 bookworm:app
     labels:
-      # Override this in docker-compose.override.yml
-      - traefik.http.routers.whoami.rule=Host(`<YOUR_DOMAIN_NAME>`) && PathPrefix(`/cgi-bin`)
-      - traefik.http.routers.whoami.tls=true
-      - traefik.http.routers.whoami.tls.certresolver=le
+      # Put this in docker-compose.override.yml, with the correct domain
+      # - traefik.http.routers.bookworm.rule=Host(`<YOUR_DOMAIN>`) && PathPrefix(`/cgi-bin`)
+      - traefik.http.routers.bookworm.tls=true
+      - traefik.http.routers.bookworm.tls.certresolver=le
+      - traefik.http.services.bookworm.loadbalancer.server.port=10012
