@@ -16,7 +16,6 @@ services:
       - "--entryPoints.websecure.address=:443"
       # Put this in docker-compose.override.yml, with your email
       # - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
-      - "--certificatesResolvers.le.acme.email=scott.enderle@gmail.com"
       - "--certificatesResolvers.le.acme.storage=acme.json"
       - "--certificatesResolvers.le.acme.tlsChallenge=true"
       - "--certificatesResolvers.le.acme.httpChallenge=true"
@@ -48,7 +47,6 @@ services:
     labels:
       # Put this in docker-compose.override.yml, with the correct domain
       # - traefik.http.routers.nginx.rule=Host(`<YOUR_DOMAIN>`)
-      - traefik.http.routers.nginx.rule=Host(`bkt.pennds.org`)
       - traefik.http.routers.nginx.tls=true
       - traefik.http.routers.nginx.tls.certresolver=le
 
@@ -59,7 +57,6 @@ services:
     environment:
       # Put this in docker-compose.override.yml, with a secure password
       # - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
-      - MYSQL_ROOT_PASSWORD='e3qTFTRmSeuVnSN2WaEr5nGg'
 
   bookworm:
     build:
@@ -68,7 +65,6 @@ services:
     environment:
       # Put this in docker-compose.override.yml, with a secure password
       # - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
-      - MYSQL_ROOT_PASSWORD='e3qTFTRmSeuVnSN2WaEr5nGg'
     depends_on:
       - mariadb
     volumes:
@@ -78,7 +74,6 @@ services:
     labels:
       # Put this in docker-compose.override.yml, with the correct domain
       # - traefik.http.routers.bookworm.rule=Host(`<YOUR_DOMAIN>`) && PathPrefix(`/cgi-bin`)
-      - traefik.http.routers.bookworm.rule=Host(`bkt.pennds.org`) && PathPrefix(`/cgi-bin`)
       - traefik.http.routers.bookworm.tls=true
       - traefik.http.routers.bookworm.tls.certresolver=le
       - traefik.http.services.bookworm.loadbalancer.server.port=10012
