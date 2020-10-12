@@ -4,7 +4,7 @@ A docker-compose stack for bookworm.
 Default root passwords for mysql are insecure and stored as
 an environment variable in `docker-compose.yml`. If you wish
 to use your own passwords or otherwise edit the docker-compose file,
-create a new file at `docker-compose-override.yml` and paste (at least)
+create a new file at `docker-compose.override.yml` and paste (at least)
 something like the following into it.
 
 
