@@ -1,6 +1,11 @@
 # bookworm-compose
 A docker-compose stack for bookworm.
 
+## quickstart
+
+- create volume: `docker volume create --name=mysql_data`
+- run containers: `$ docker-compose up`
+
 Default root passwords for mysql are insecure and stored as
 an environment variable in `docker-compose.yml`. If you wish
 to use your own passwords or otherwise edit the docker-compose file,
