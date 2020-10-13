@@ -21,3 +21,5 @@ RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
 
 COPY bookworm/put_password_in_config.sh ./
 RUN sh put_password_in_config.sh
+
+EXPOSE 10012
