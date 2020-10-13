@@ -12,7 +12,6 @@ RUN apt-get update \
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY bookworm/bookworm.py bookworm.py
 
 RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
     && unzip master.zip \
