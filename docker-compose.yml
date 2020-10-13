@@ -27,7 +27,7 @@ services:
       - ./serve:/usr/share/nginx/html/
       - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
     labels:
-      - traefik.http.routers.nginx.rule=HostRegexp(`bkt.pennds.org`)
+      - traefik.http.routers.nginx.rule=Host(`localhost`)
 
   mariadb:
     image: mariadb:latest
@@ -35,7 +35,7 @@ services:
       - mysql_data:/var/lib/mysql
     environment:
       # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
+      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
 
   bookworm:
     build:
@@ -43,7 +43,7 @@ services:
       dockerfile: ./compose/bookworm/Dockerfile
     environment:
       # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
+      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
     depends_on:
       - mariadb
     volumes:
@@ -51,6 +51,6 @@ services:
     # command: bookworm serve 
     command: gunicorn --bind 0.0.0.0:10012 bookworm:app
     labels:
-      - traefik.http.routers.bookworm.rule=HostRegexp(`bkt.pennds.org`) && PathPrefix(`/cgi-bin`)
+      - traefik.http.routers.bookworm.rule=Host(`localhost`) && PathPrefix(`/cgi-bin`)
       - traefik.http.services.bookworm.loadbalancer.server.port=10012
 
