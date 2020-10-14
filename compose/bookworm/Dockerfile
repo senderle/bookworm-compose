@@ -10,6 +10,9 @@ RUN apt-get update \
         wget \
         unzip
 
+### FOR DEVELOPMENT ONLY--DROP OUT BEFORE PRODUCTION.
+RUN apt-get install -y --no-install-recommends mariadb-client
+
 COPY requirements.txt ./
 COPY bookworm/bookworm.py bookworm.py
 
@@ -26,5 +29,6 @@ RUN cd BookwormDB & pip install . .
 
 COPY bookworm/put_password_in_config.sh ./
 RUN sh put_password_in_config.sh
+
 
 EXPOSE 10012
