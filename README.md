@@ -1,14 +1,21 @@
 # bookworm-compose
 A docker-compose stack for bookworm.
 
+
+## prerequisites
+
+- [docker and docker compose](https://www.docker.com/products/docker-desktop)
+
 Default root passwords for mysql are insecure and stored as
 an environment variable in `docker-compose.yml`. Some are also stored in mysql config files.
 It's a mess, will be fixed later. For now, just work with the included passwords.
 
 
+## quick-ish start
+
 ```
 # Create a persistent MySQL volume.
-docker volume create mysql_data
+docker volume create --name=mysql_data
 # Set the password. Note that if you change this here, it needs to be changed in several other places too.
 bin/run set_mysql_password insecure_dev_password
 
@@ -54,19 +61,14 @@ the queries that work will be different.
 
 
 
+  ## docker tips
+  - __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
+  - [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
 
 
+## secrets
 
-
-
-
-
-
-
-
-
-
-
+Default root passwords for mysql are insecure and stored as an environment variable in `docker-compose.yml`. If you wish to use your own passwords or otherwise edit the docker-compose file, create a new file at `docker-compose.override.yml` and paste (at least) something like the following into it.
 
 
 
@@ -74,6 +76,7 @@ If you wish
 to use your own passwords or otherwise edit the docker-compose file,
 create a new file at `docker-compose.override.yml` and paste (at least)
 something like the following into it.
+
 
 
 ```
@@ -85,6 +88,3 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD="my_secret"
 ```
-
-
-
