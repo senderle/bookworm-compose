@@ -29,4 +29,5 @@ services:
 ```
 
 ## docker tips
-- tear down docker-compose setup: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and volumes, and will inform you why an image could not be destroyed, if applicable)
+- __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
+- [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
