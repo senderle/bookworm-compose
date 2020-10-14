@@ -1,0 +1,7 @@
+[client]
+host=mariadb
+user=bookworm
+password=
+
+# The name of the machine in the docker swarm.
+clienthostname=

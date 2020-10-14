@@ -10,13 +10,27 @@ RUN apt-get update \
         wget \
         unzip
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+### FOR DEVELOPMENT ONLY--DROP OUT BEFORE PRODUCTION.
+RUN apt-get install -y --no-install-recommends mariadb-client
 
-RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
-    && unzip master.zip \
-    && cd BookwormDB-master \
-    && pip install . .
+RUN pip install --no-cache-dir numpy pandas \
+        gunicorn bounter regex psutil mysqlclient
 
+# Not used
 COPY bookworm/put_password_in_config.sh ./
 RUN sh put_password_in_config.sh
+
+COPY ./bookworm/BookwormDB .
+RUN cd BookwormDB & pip install . .
+
+# A different way of population the python module, not used.
+#RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
+#    && unzip master.zip \
+#    && cd BookwormDB-master \
+#    && pip install . .
+
+
+# Makes the corpus ready.
+WORKDIR /corpus
+
+EXPOSE 10012

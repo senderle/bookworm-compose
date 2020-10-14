@@ -1,0 +1,24 @@
+#!/bin/bash
+
+case $1 in
+  bash) docker exec -it bookworm-compose_$2_1 /bin/bash ;;
+  set_mysql_password) docker exec -it bookworm-compose_mariadb_1 /usr/bin/mysql -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$2' WITH GRANT OPTION;" ;;
+  rebuild) docker-compose down --volumes --rmi local --remove-orphans ;;
+  clean) docker-compose down --volumes --rmi local --remove-orphans ;;
+  create_mysql_data) docker volume create --name=mysql_data ;;
+  dev) echo "dev mode" ;;
+  restart) docker-compose down ;;
+  pipdev) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/pip install -e /BookwormDB ;;
+  build_bookworm) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/bookworm build all ;;
+  *) echo "no such command" ;;
+esac
+
+# Launch a server
+
+
+case $1 in
+  restart) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
+  rebuild) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
+  dev) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
+  *) echo "done" ;;
+esac

@@ -1,0 +1,10 @@
+services:
+  nginx:
+    ports:
+      # Forward Nginx port 80 to 8020 on localhost.
+      - 0.0.0.0:8020:80
+  bookworm:
+    ports:
+      # Expose the bookworm api directly on an adjacent port.
+      # Don't use this in production, because it's subject to DDOS attacks.
+      - 0.0.0.0:10013:10012

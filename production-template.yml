@@ -1,0 +1,75 @@
+version: '3'
+
+volumes:
+  traefik_certs:
+  mysql_data:
+    external: true
+
+services:
+
+  traefik:
+    image: traefik:latest
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesResolvers.le.acme.email=<YOUR_EMAIL>"
+      - "--certificatesResolvers.le.acme.storage=acme.json"
+      - "--certificatesResolvers.le.acme.tlsChallenge=true"
+      - "--certificatesResolvers.le.acme.httpChallenge=true"
+      - "--certificatesResolvers.le.acme.httpChallenge.entryPoint=web"
+    restart: always
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik_certs:/etc/traefik/acme
+    labels:
+      # Redirect all HTTP to HTTPS temporarily (to be changed
+      # to a permanent redirect once setup is complete).
+      - traefik.http.routers.http_catchall.rule=HostRegexp(`{any:.+}`)
+      - traefik.http.routers.http_catchall.entrypoints=web
+      - traefik.http.routers.http_catchall.middlewares=https_redirect
+      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https_redirect.redirectscheme.permanent=false
+    depends_on:
+      - bookworm
+      - nginx
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./serve:/usr/share/nginx/html/
+      - ./bookworm/Bookworm-Vega/build:/usr/share/nginx/html/vega/
+    labels:
+      - traefik.http.routers.nginx.rule=Host(`<YOUR_DOMAIN>`)
+      - traefik.http.routers.nginx.tls=true
+      - traefik.http.routers.nginx.tls.certresolver=le
+
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
+
+  bookworm:
+    build:
+      context: .
+      dockerfile: ./compose/bookworm/Dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD='<PASSWORD_IS_INSECURE>'
+    depends_on:
+      - mariadb
+    volumes:
+      - ./corpus:/corpus
+    # command: bookworm serve 
+    command: gunicorn --bind 0.0.0.0:10012 bookworm:app
+    labels:
+      - traefik.http.routers.bookworm.rule=Host(`<YOUR_DOMAIN>`) && PathPrefix(`/cgi-bin`)
+      - traefik.http.routers.bookworm.tls=true
+      - traefik.http.routers.bookworm.tls.certresolver=le
+      - traefik.http.services.bookworm.loadbalancer.server.port=10012
+
