@@ -4,3 +4,6 @@
 [submodule "bookworm/Bookworm-Vega"]
 	path = bookworm/Bookworm-Vega
 	url = git@github.com:CreatingData/Bookworm-Vega
+[submodule "bookworm/bookworm/BookwormDB"]
+	path = bookworm/bookworm/BookwormDB
+	url = git@github.com:Bookworm-Project/BookwormDB
