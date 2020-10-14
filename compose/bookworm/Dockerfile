@@ -18,8 +18,7 @@ COPY bookworm/bookworm.py bookworm.py
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY bookworm/BookwormDB/ ./
-
+COPY ./bookworm/BookwormDB/ BookwormDB/
 RUN cd BookwormDB & pip install . .
 
 #RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
