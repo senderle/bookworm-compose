@@ -37,24 +37,20 @@ services:
     depends_on:
       - mariadb
       - bookworm
-
   mariadb:
     image: mariadb:latest
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
       # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
-    expose:
-      - "3306"
-
+      - MYSQL_ROOT_PASSWORD=insecure_dev_root_password
   bookworm:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
     environment:
       # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD='insecure_dev_root_password'
+      - MYSQL_ROOT_PASSWORD=insecure_dev_root_password
     expose:
       - "10012"
     depends_on:
@@ -62,6 +58,7 @@ services:
     volumes:
       - ./corpus:/corpus
       - ./compose/bookworm/default_mysql_config:/etc/bookworm/
+      - ./bookworm/BookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0
     labels:
       - traefik.http.routers.bookworm.rule=Host(`localhost`) && PathPrefix(`/cgi-bin`)

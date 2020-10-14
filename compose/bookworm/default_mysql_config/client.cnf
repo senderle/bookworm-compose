@@ -4,4 +4,4 @@ user=bookworm
 password=
 
 # The name of the machine in the docker swarm.
-clienthostname:bookworm
+clienthostname=
