@@ -11,12 +11,18 @@ RUN apt-get update \
         unzip
 
 COPY requirements.txt ./
+COPY bookworm/bookworm.py bookworm.py
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
-    && unzip master.zip \
-    && cd BookwormDB-master \
-    && pip install . .
+COPY bookworm/BookwormDB/ ./
+
+RUN cd BookwormDB & pip install . .
+
+#RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
+#    && unzip master.zip \
+#    && cd BookwormDB-master \
+#    && pip install . .
 
 COPY bookworm/put_password_in_config.sh ./
 RUN sh put_password_in_config.sh

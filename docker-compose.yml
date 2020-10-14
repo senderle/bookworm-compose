@@ -62,8 +62,7 @@ services:
       - mariadb
     volumes:
       - ./corpus:/corpus
-    # command: bookworm serve
-    command: bookworm serve
+    command: bookworm serve --bind 0.0.0.0
     labels:
       - traefik.http.routers.bookworm.rule=Host(`localhost`) && PathPrefix(`/cgi-bin`)
       - traefik.http.services.bookworm.loadbalancer.server.port=10012
