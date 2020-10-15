@@ -21,7 +21,7 @@ COPY bookworm/put_password_in_config.sh ./
 RUN sh put_password_in_config.sh
 
 COPY ./bookworm/BookwormDB .
-RUN cd BookwormDB & pip install . .
+RUN pip install . .
 
 # A different way of population the python module, not used.
 #RUN wget https://github.com/Bookworm-project/BookwormDB/archive/master.zip \
@@ -32,5 +32,3 @@ RUN cd BookwormDB & pip install . .
 
 # Makes the corpus ready.
 WORKDIR /corpus
-
-EXPOSE 10012
