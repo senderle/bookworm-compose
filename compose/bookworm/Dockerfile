@@ -26,7 +26,18 @@ RUN pip install . .
 #    && pip install . .
 
 # Must be run with passwords defined as environ variables.
-COPY ./bookworm/setup_mysql_passwords.sh /usr/bin/setup_mysql_passwords
+
+RUN echo "[client]" > /etc/bookworm/admin.cnf
+RUN echo "user=root" >> /etc/bookworm/admin.cnf
+RUN echo "password_file=/run/secrets/mysql_user_pw" >> /etc/bookworm/admin.cnf
+RUN echo "host=mariadb" >> /etc/bookworm/admin.cnf
+RUN echo "clienthostname=" >> /etc/bookworm/admin.cnf
+
+RUN echo "[client]" > /etc/bookworm/client.cnf
+RUN echo "user=bookworm" >> /etc/bookworm/client.cnf
+RUN echo "password_file=/run/secrets/mysql_user_pw" >> /etc/bookworm/client.cnf
+RUN echo "host=mariadb" >> /etc/bookworm/client.cnf
+RUN echo "clienthostname=" >> /etc/bookworm/client.cnf
 
 # Makes the corpus ready.
 WORKDIR /corpus
