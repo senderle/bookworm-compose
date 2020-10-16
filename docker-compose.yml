@@ -40,6 +40,6 @@ services:
       - mariadb
     volumes:
       - ./corpus:/corpus
-      - ./compose/bookworm/default_mysql_config:/etc/bookworm/
+#      - ./compose/bookworm/default_mysql_config:/etc/bookworm/
       - ./bookworm/BookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0

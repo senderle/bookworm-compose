@@ -16,11 +16,13 @@ It's a mess, will be fixed later. For now, just work with the included passwords
 ```
 # Create a persistent MySQL volume.
 docker volume create --name=mysql_data
-# Set the password. Note that if you change this here, it needs to be changed in several other places too.
-bin/run set_mysql_password insecure_dev_password
 
 # Run the service, including a webhost over port 8020
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+# I populate my own passwords in docker-compose.override.yml, so run:
+# docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up
+
 
 ```
 
@@ -29,8 +31,12 @@ This doesn't fill any bookworms. To do that, you need to populate the files at c
 ```
 cp -r bookworm/BookwormDB/tests/test_bookworm_files/ corpus/
 # Give the name the name the bookworm will run as
-echo "[client]\ndatabase=test_bookworm_files" >> corpus/bookworm.cnf
+
+echo "[client]" > corpus/bookworm.cnf
+echo "database=test_bookworm_files" >> corpus/bookworm.cnf
+
 # Build inside the API server container. (Should really be a different container, but for now...)
+
 bin/run build_bookworm
 ```
 
@@ -53,7 +59,7 @@ the queries that work will be different.
   },
   "search_limits": {},
   "vega": {
-    "title": "Number of mederalist papers by author."
+    "title": "Number of Federalist paper paragraphs by author."
   }
 }
 ```
@@ -61,23 +67,14 @@ the queries that work will be different.
 
 
 
-  ## docker tips
-  - __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
-  - [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
+## docker tips
+- __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
+- [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
 
 
 ## secrets
 
 Default root passwords for mysql are insecure and stored as an environment variable in `docker-compose.yml`. If you wish to use your own passwords or otherwise edit the docker-compose file, create a new file at `docker-compose.override.yml` and paste (at least) something like the following into it.
-
-
-
-If you wish
-to use your own passwords or otherwise edit the docker-compose file,
-create a new file at `docker-compose.override.yml` and paste (at least)
-something like the following into it.
-
-
 
 ```
 services:
@@ -88,3 +85,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD="my_secret"
 ```
+
+If you wish
+to use your own passwords or otherwise edit the docker-compose file,
+create a new file at `docker-compose.override.yml` and paste (at least)
+something like the following into it.

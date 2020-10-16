@@ -1,5 +1,0 @@
-[client]
-host=mariadb
-user=root
-password=insecure_dev_root_password
-clienthostname=

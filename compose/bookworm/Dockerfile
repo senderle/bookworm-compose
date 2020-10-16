@@ -16,10 +16,6 @@ RUN apt-get install -y --no-install-recommends mariadb-client
 RUN pip install --no-cache-dir numpy pandas \
         gunicorn bounter regex psutil mysqlclient
 
-# Not used
-COPY bookworm/put_password_in_config.sh ./
-RUN sh put_password_in_config.sh
-
 COPY ./bookworm/BookwormDB .
 RUN pip install . .
 
@@ -29,6 +25,8 @@ RUN pip install . .
 #    && cd BookwormDB-master \
 #    && pip install . .
 
+# Must be run with passwords defined as environ variables.
+COPY ./bookworm/setup_mysql_passwords.sh /usr/bin/setup_mysql_passwords
 
 # Makes the corpus ready.
 WORKDIR /corpus
