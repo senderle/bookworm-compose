@@ -32,7 +32,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
-      - MYSQL_USER=bookworm
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
       - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
     secrets:
@@ -43,9 +42,9 @@ services:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
-    environment:
-     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
-     - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
+#    environment:
+#     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
+#     - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
     secrets:
       - mysql_root_pw
       - mysql_user_pw
@@ -53,7 +52,5 @@ services:
       - mariadb
     volumes:
       - ./corpus:/corpus
-#      - ./compose/bookworm/default_mysql_config:/etc/bookworm/
       - ./bookworm/BookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0
-
