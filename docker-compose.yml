@@ -1,8 +1,14 @@
-version: '3'
+version: '3.1'
 
 volumes:
   mysql_data:
     external: true
+
+secrets:
+  mysql_root_pw:
+    file: ./compose/mysql/dev_root_pw
+  mysql_user_pw:
+    file: ./compose/mysql/dev_user_pw
 
 services:
 
@@ -26,20 +32,25 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     environment:
-      # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD=insecure_dev_root_password
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
+      - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
+    secrets:
+      - mysql_root_pw
+      - mysql_user_pw
 
   bookworm:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
-    environment:
-      # Put this in docker-compose.override.yml, with a secure password
-      - MYSQL_ROOT_PASSWORD=insecure_dev_root_password
+#    environment:
+#     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
+#     - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
+    secrets:
+      - mysql_root_pw
+      - mysql_user_pw
     depends_on:
       - mariadb
     volumes:
       - ./corpus:/corpus
-#      - ./compose/bookworm/default_mysql_config:/etc/bookworm/
       - ./bookworm/BookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0
