@@ -1,15 +1,22 @@
 # bookworm-compose
-A docker-compose stack for bookworm.
+
+A docker-compose stack for bookworm. Separate volumes to
+1. Serve a mysql bookworm instance with an API over gunicorn.
+2. Publish that bookworm to http using nginx for both the raw API and the vega-lite visualizations. (The old line chart visualizations will need some tweaking, alas.)
+3. Add ssl encryption.
 
 
 ## prerequisites
 
 - [docker and docker compose](https://www.docker.com/products/docker-desktop)
 
-Default root passwords for mysql are insecure and stored as
-an environment variable in `docker-compose.yml`. Some are also stored in mysql config files.
-It's a mess, will be fixed later. For now, just work with the included passwords.
+Default root passwords for mysql are handled through docker secrets and stored at
+`compose/mysql/dev_root_pw`
+`compose/mysql/dev_user_pw`.
 
+A number of helper functions are contained in the bash script `bin/run`. 
+* `build_bookworm` creates a bookworm.
+* `dev` fires up a local server over nginx.
 
 ## quick-ish start
 
@@ -68,25 +75,22 @@ the queries that work will be different.
 
 
 ## docker tips
+
 - __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
 - [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
 
+The script `bin/run rebuild` will remove everything. `bin/run soft-rebuild` removes everything except the mysql volume, which can be the most expensive to repopulate.
+
+## MySQL users.
+
+The security for this is relatively tight. Once a bookworm is built, you can remove the associated files, and the only data in
+the bookworm are wordcounts, which organizations like JStor and the Hathi Trust view as metadata that is protected under
+fair use considerations. Additionally, the web server client does not have any write access to the underlying database; the MySQL root
+password is used only for creating tables.
 
 ## secrets
 
-Default root passwords for mysql are insecure and stored as an environment variable in `docker-compose.yml`. If you wish to use your own passwords or otherwise edit the docker-compose file, create a new file at `docker-compose.override.yml` and paste (at least) something like the following into it.
 
-```
-services:
-  bookworm:
-    environment:
-      - MYSQL_ROOT_PASSWORD="my_secret"
-  mariadb:
-    environment:
-      - MYSQL_ROOT_PASSWORD="my_secret"
-```
 
-If you wish
-to use your own passwords or otherwise edit the docker-compose file,
-create a new file at `docker-compose.override.yml` and paste (at least)
-something like the following into it.
+If you wish to use your own passwords or otherwise edit the docker-compose file,
+create a new file at `docker-compose.override.yml` do so there.
