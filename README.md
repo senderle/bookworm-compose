@@ -48,31 +48,29 @@ bin/run build_bookworm
 ```
 
 At this point, you've configured the docker stack and built a bookworm. The data is accessible on your
-local machine via port 10013, if you wish to access the JSON API directly. Or go to http://localhost:8020/vega/,
-and replace the query in the box with this.
+local machine via port 10013, if you wish to access the JSON API directly. 
 
-If you click 'draw plot', you should get barchart of federalist paper authors. If you build on some other corpus,
-the queries that work will be different.
+Or go to http://localhost:8020/#{%20%22plottype%22:%20%22pointchart%22,%20%22smoothingSpan%22:%200,%20%22host%22:%20%22http://localhost:8020/%22,%20%22database%22:%20%22test_bookworm_files%22,%20%22aesthetic%22:%20{%20%22x%22:%20%22TextCount%22,%20%22y%22:%20%22author%22%20},%20%22search_limits%22:%20[{%22word%22:%20[%22the%22]}],%20%22vega%22:%20{%20%22title%22:%20%22Number%20of%20Federalist%20paper%20paragraphs%20by%20author.%22%20}%20
+.
 
-```json
-{
-  "plottype": "barchart",
-  "smoothingSpan": 0,
-  "host": "http://localhost:8020/",
-  "database": "test_bookworm_files",
-  "aesthetic": {
-    "x": "TextCount",
-    "y": "author"
-  },
-  "search_limits": {},
-  "vega": {
-    "title": "Number of Federalist paper paragraphs by author."
-  }
-}
+
+## Adding another bookworm.
+
+If you want to add another one, you need to clear build info out of the `/corpus` folder before running `build_bookworm`.
+
+Here's an example with state of the Union addresses.
+
+```
+rm -rf corpus/.bookworm
+wget http://benschmidt.org/SOTU_bundle.tar.gz
+tar -xzvf SOTU_bundle.tar.gz
+mv bundle/* corpus
+echo "[client]" > corpus/bookworm.cnf
+echo "database=SOTU" >> corpus/bookworm.cnf
+bin/run build_bookworm
 ```
 
-
-
+Now visit [this link](http://localhost:8020/#%7B%22plottype%22:%22linechart%22,%22smoothingSpan%22:0,%22host%22:%22http://localhost:8020/%22,%22database%22:%22SOTU%22,%22aesthetic%22:%7B%22color%22:%22Search%22,%22x%22:%22year%22,%22y%22:%22WordsPerMillion%22%7D,%22search_limits%22:%5B%7B%22word%22:%5B%22today%22%5D%7D,%7B%22word%22:%5B%22tonight%22%5D%7D%5D,%22vega%22:%7B%22title%22:%22Number%20of%20Federalist%20paper%20paragraphs%20by%20author.%22%7D%7D)
 
 ## docker tips
 
