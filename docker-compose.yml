@@ -47,6 +47,6 @@ services:
     depends_on:
       - mariadb
     volumes:
-      - ./corpus:/corpus
+      - ./corpora:/corpus
       - ./lib/bookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0

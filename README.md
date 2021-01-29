@@ -10,15 +10,18 @@ A docker-compose stack for bookworm. Separate volumes to
 
 - [docker and docker compose](https://www.docker.com/products/docker-desktop)
 
-Default root passwords for mysql are handled through docker secrets and stored at
-`compose/mysql/dev_root_pw`
-`compose/mysql/dev_user_pw`.
 
-A number of helper functions are contained in the bash script `bin/run`. 
-* `build_bookworm` creates a bookworm.
-* `dev` fires up a local server over nginx.
 
 ## quick-ish start
+
+A number of helper functions are contained in the bash scripts in `bin`. 
+
+* `bin/build_bookworm [NAME]` creates a bookworm named [NAME].
+* `bin/run dev` fires up a local server over nginx.
+* `bin/run rebuild` clears the docker state. 
+
+If you want to manage docker yourself, you can do the 
+following:
 
 ```
 # Create a persistent MySQL volume.
@@ -26,25 +29,20 @@ docker volume create --name=mysql_data
 
 # Run the service, including a webhost over port 8020
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
-# I populate my own passwords in docker-compose.override.yml, so run:
-# docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up
-
-
 ```
 
-This doesn't fill any bookworms. To do that, you need to populate the files at corpus/ and build.
+This doesn't fill any bookworms. To do that, you need to populate the files at corpora and actually build an instance.
+
+By default, each folder in corpora will be used as the name of a bookworm.
+
+Be sure to choose a name without spaces and that is not a reserved keyword in mysql (FOR, EACH, FLOAT, that kind of thing.)
 
 ```
-cp -r bookworm/BookwormDB/tests/test_bookworm_files/ corpus/
-# Give the name the name the bookworm will run as
+mkdir -p corpora
 
-echo "[client]" > corpus/bookworm.cnf
-echo "database=test_bookworm_files" >> corpus/bookworm.cnf
+cp -r lib/BookwormDB/tests/test_bookworm_files/ corpora/test_bookworm_files
 
-# Build inside the API server container. (Should really be a different container, but for now...)
-
-bin/run build_bookworm
+bin/build_bookworm test_bookworm_files
 ```
 
 At this point, you've configured the docker stack and built a bookworm. The data is accessible on your
@@ -61,34 +59,33 @@ If you want to add another one, you need to clear build info out of the `/corpus
 Here's an example with state of the Union addresses.
 
 ```
-rm -rf corpus/.bookworm
 wget http://benschmidt.org/SOTU_bundle.tar.gz
 tar -xzvf SOTU_bundle.tar.gz
-mv bundle/* corpus
-echo "[client]" > corpus/bookworm.cnf
-echo "database=SOTU" >> corpus/bookworm.cnf
-bin/run build_bookworm
+mv bundle/ corpora/SOTU
+bin/build_bookworm SOTU
 ```
 
-Now visit [this link](http://localhost:8020/#%7B%22plottype%22:%22linechart%22,%22smoothingSpan%22:0,%22host%22:%22http://localhost:8020/%22,%22database%22:%22SOTU%22,%22aesthetic%22:%7B%22color%22:%22Search%22,%22x%22:%22year%22,%22y%22:%22WordsPerMillion%22%7D,%22search_limits%22:%5B%7B%22word%22:%5B%22today%22%5D%7D,%7B%22word%22:%5B%22tonight%22%5D%7D%5D,%22vega%22:%7B%22title%22:%22Number%20of%20Federalist%20paper%20paragraphs%20by%20author.%22%7D%7D)
+Now visit [this link](http://localhost:8020/#%7B%22plottype%22:%22linechart%22,%22smoothingSpan%22:0,%22host%22:%22http://localhost:8020/%22,%22database%22:%22SOTU%22,%22aesthetic%22:%7B%22color%22:%22Search%22,%22x%22:%22year%22,%22y%22:%22WordsPerMillion%22%7D,%22search_limits%22:%5B%7B%22word%22:%5B%22today%22%5D%7D,%7B%22word%22:%5B%22tonight%22%5D%7D%5D,%22vega%22:%7B%22title%22:%22SOTUs.%22%7D%7D)
+
+You should get a line chart of words in State of the Union addresses.
 
 ## docker tips
 
-- __tear down docker-compose setup__: `$ docker-compose down --rmi all --volumes --remove-orphans` (this will remove containers, images, and non-external volumes, and will inform you why a resource could not be destroyed, if applicable)
-- [cheat sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
+Examine the scripts in `bin/` to get an idea how we intend docker be used.
 
 The script `bin/run rebuild` will remove everything. `bin/run soft-rebuild` removes everything except the mysql volume, which can be the most expensive to repopulate.
 
-## MySQL users.
+## Security
+
+Default root passwords for mysql are handled through docker secrets and stored at
+`compose/mysql/dev_root_pw`
+`compose/mysql/dev_user_pw`.
+
+If you will be serving over the web, you should probably change these. There
+are not major security vulnerabilities to using a public password in docker, but 
+there could be.
 
 The security for this is relatively tight. Once a bookworm is built, you can remove the associated files, and the only data in
 the bookworm are wordcounts, which organizations like JStor and the Hathi Trust view as metadata that is protected under
 fair use considerations. Additionally, the web server client does not have any write access to the underlying database; the MySQL root
 password is used only for creating tables.
-
-## secrets
-
-
-
-If you wish to use your own passwords or otherwise edit the docker-compose file,
-create a new file at `docker-compose.override.yml` do so there.

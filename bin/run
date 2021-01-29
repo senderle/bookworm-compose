@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 case $1 in
 
   bash) docker exec -it bookworm-compose_$2_1 /bin/bash ;;
@@ -11,17 +12,16 @@ case $1 in
   restart) docker-compose down ;;
   pipdev) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/pip install -e /BookwormDB ;;
   build_bookworm) : ;;
-  sync_libs) git clone --single-branch --branch docker git@github.com:Bookworm-project/BookwormDB.git lib/bookwormDB ;;
+  sync_libs) bin/sync_libs ;;
   *) echo "no such command" ;;
 esac
 
 # Launch a server
 
 case $1 in
-  sync_libs) git clone --single-branch git@github.com:Bookworm-project/bookworm-app.git lib/bookworm-app ;;
   build_bookworm) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/bookworm build all ;;
-  restart) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
-  rebuild | soft_rebuild) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
-  dev) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
+  restart) docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ;;
+  rebuild | soft_rebuild) docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ;;
+  dev) docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ;;
   *) echo "done" ;;
 esac

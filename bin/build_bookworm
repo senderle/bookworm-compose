@@ -1,0 +1,19 @@
+#!/bin/bash
+
+NAME=$1
+
+if [ ! -d corpora/$NAME ]; then
+  echo "$NAME"
+  echo "You must enter the name of a folder in corpora with bookworm files"
+  exit 0
+fi
+
+if [ ! -f corpora/$NAME/bookworm.cnf ]; then
+  echo "Using $NAME as name of bookworm";
+  echo "[client]" > corpora/$NAME/bookworm.cnf;
+  echo "database=$NAME" >> corpora/$NAME/bookworm.cnf;
+  else 
+  echo "corpora/$NAME/bookworm.cnf exists"
+fi
+
+docker exec -it bookworm-compose_bookworm_1  bash -c "cd $NAME && /usr/local/bin/bookworm build all"
