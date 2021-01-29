@@ -16,7 +16,7 @@ RUN apt-get install -y --no-install-recommends mariadb-client
 RUN pip install --no-cache-dir numpy pandas \
         gunicorn bounter regex psutil mysqlclient
 
-COPY ./bookworm/BookwormDB .
+COPY ./lib/bookwormDB .
 RUN pip install . .
 
 # A different way of population the python module, not used.

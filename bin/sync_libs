@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ -d lib/bookwormDB ]
+  then
+    pushd lib/bookwormDB;
+    git pull;
+    popd;
+  else
+    git clone --single-branch --branch docker git@github.com:Bookworm-project/BookwormDB.git lib/bookwormDB ;
+fi
+
+if [ -d lib/bookworm-app ]
+  then
+    pushd lib/bookworm-app;
+    git pull;
+    echo $(pwd)
+    popd;
+ else
+    git clone git@github.com:Bookworm-project/bookworm-app.git lib/bookworm-app ;
+fi

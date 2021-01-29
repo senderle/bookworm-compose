@@ -1,7 +1,0 @@
-[submodule "bookworm/BookwormDB"]
-	path = bookworm/BookwormDB
-	url = git@github.com:Bookworm-project/BookwormDB
-	branch = docker
-[submodule "bookworm/Bookworm-Vega"]
-	path = bookworm/Bookworm-Vega
-	url = git@github.com:CreatingData/Bookworm-Vega

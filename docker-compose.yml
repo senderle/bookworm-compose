@@ -15,11 +15,10 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./serve:/var/lib/html
-      - ./bookworm/Bookworm-Vega/dist/:/var/lib/html/vega
+      - ./lib/bookworm-app/public/:/var/lib/html/
       - ./compose/nginx/templates:/etc/nginx/templates
     environment:
-     - NGINX_HOST=foobar.com
+     - NGINX_HOST=foobar.com # You may want to override this...
      - NGINX_PORT=80 # The host within the container that nginx serves over.
     expose:
       - "80"
@@ -42,9 +41,6 @@ services:
     build:
       context: .
       dockerfile: ./compose/bookworm/Dockerfile
-#    environment:
-#     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
-#     - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
     secrets:
       - mysql_root_pw
       - mysql_user_pw
@@ -52,5 +48,5 @@ services:
       - mariadb
     volumes:
       - ./corpus:/corpus
-      - ./bookworm/BookwormDB:/BookwormDB/
+      - ./lib/bookwormDB:/BookwormDB/
     command: bookworm serve --bind 0.0.0.0

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 case $1 in
+
   bash) docker exec -it bookworm-compose_$2_1 /bin/bash ;;
-#  set_mysql_password) docker exec -it bookworm-compose_mariadb_1 /usr/bin/mysql -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$2' WITH GRANT OPTION;" ;;
   rebuild) docker-compose down --volumes --rmi all --remove-orphans && docker volume rm mysql_data && docker volume create --name=mysql_data;;
   soft_rebuild) docker-compose down --volumes --rmi local --remove-orphans && docker volume rm mysql_data && docker volume create --name=mysql_data;;
   clean) docker-compose down --volumes --rmi all --remove-orphans && docker volume rm mysql_data;;
@@ -11,12 +11,14 @@ case $1 in
   restart) docker-compose down ;;
   pipdev) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/pip install -e /BookwormDB ;;
   build_bookworm) : ;;
+  sync_libs) git clone --single-branch --branch docker git@github.com:Bookworm-project/BookwormDB.git lib/bookwormDB ;;
   *) echo "no such command" ;;
 esac
 
 # Launch a server
 
 case $1 in
+  sync_libs) git clone --single-branch git@github.com:Bookworm-project/bookworm-app.git lib/bookworm-app ;;
   build_bookworm) docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/bookworm build all ;;
   restart) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;
   rebuild | soft_rebuild) docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up ;;

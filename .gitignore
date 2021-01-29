@@ -1,3 +1,5 @@
 docker-compose.override.yml
 .envs
 production.yml
+lib/bookwormDB
+lib/bookworm-app
