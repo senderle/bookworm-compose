@@ -43,7 +43,7 @@ Be sure to choose a name without spaces and that is not a reserved keyword in my
 ```
 mkdir -p corpora
 
-cp -r lib/BookwormDB/tests/test_bookworm_files/ corpora/test_bookworm_files
+cp -r lib/bookwormDB/tests/test_bookworm_files/ corpora/test_bookworm_files
 
 bin/build_bookworm test_bookworm_files
 ```
