@@ -27,6 +27,9 @@ following:
 # Create a persistent MySQL volume.
 docker volume create --name=mysql_data
 
+# Download required libraries.
+bin/sync_libs
+
 # Run the service, including a webhost over port 8020
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
@@ -48,13 +51,12 @@ bin/build_bookworm test_bookworm_files
 At this point, you've configured the docker stack and built a bookworm. The data is accessible on your
 local machine via port 10013, if you wish to access the JSON API directly. 
 
-Or go to http://localhost:8020/#{%20%22plottype%22:%20%22pointchart%22,%20%22smoothingSpan%22:%200,%20%22host%22:%20%22http://localhost:8020/%22,%20%22database%22:%20%22test_bookworm_files%22,%20%22aesthetic%22:%20{%20%22x%22:%20%22TextCount%22,%20%22y%22:%20%22author%22%20},%20%22search_limits%22:%20[{%22word%22:%20[%22the%22]}],%20%22vega%22:%20{%20%22title%22:%20%22Number%20of%20Federalist%20paper%20paragraphs%20by%20author.%22%20}%20
-.
+Or go to [this link]( http://localhost:8020/#%7B%22plottype%22:%22pointchart%22,%22smoothingSpan%22:0,%22host%22:%22http://localhost:8020/%22,%22database%22:%22test_bookworm_files%22,%22aesthetic%22:%7B%22color%22:%22Search%22,%22x%22:%22TextCount%22,%22y%22:%22author%22%7D,%22search_limits%22:%5B%7B%22word%22:%5B%22on%22%5D%7D,%7B%22word%22:%5B%22upon%22%5D%7D%5D,%22vega%22:%7B%22title%22:%22Number%20of%20Federalist%20paper%20paragraphs%20by%20author.%22%7D%7D) to see a chart in your browser.
 
 
 ## Adding another bookworm.
 
-If you want to add another one, you need to clear build info out of the `/corpus` folder before running `build_bookworm`.
+If you want to add another one, you need to add another folder with bookworm inputs into `/corpora`.
 
 Here's an example with state of the Union addresses.
 
