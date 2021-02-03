@@ -16,4 +16,4 @@ if [ ! -f corpora/$NAME/bookworm.cnf ]; then
   echo "corpora/$NAME/bookworm.cnf exists"
 fi
 
-docker exec -it bookworm-compose_bookworm_1  bash -c "cd $NAME && /usr/local/bin/bookworm build all"
+docker-compose run --rm bookworm  bash -c "cd $NAME && /usr/local/bin/bookworm build all"
