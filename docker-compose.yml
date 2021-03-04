@@ -30,6 +30,7 @@ services:
     image: mariadb:latest
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./compose/mysql/conf.d:/etc/mysql/conf.d
     environment:
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_pw
       - MYSQL_PASSWORD_FILE=/run/secrets/mysql_user_pw
