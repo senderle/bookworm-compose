@@ -12,8 +12,8 @@ if [ ! -f corpora/$NAME/bookworm.cnf ]; then
   echo "Using $NAME as name of bookworm";
   echo "[client]" > corpora/$NAME/bookworm.cnf;
   echo "database=$NAME" >> corpora/$NAME/bookworm.cnf;
-  else 
-  echo "corpora/$NAME/bookworm.cnf exists"
+  else
+  echo "corpora/$NAME/bookworm.cnf exists, using existing file."
 fi
 
-docker-compose run --rm bookworm  bash -c "cd $NAME && /usr/local/bin/bookworm build all"
+docker-compose run --rm bookworm bash -c "cd $NAME && rm -rf .bookworm && bookworm build pristine && /usr/local/bin/bookworm build all"

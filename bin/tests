@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# run some tests.
+
+# docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/python /BookwormDB/tests/test_mysql.py
+# docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/python /BookwormDB/tests/test_API.py
+docker exec -it bookworm-compose_bookworm_1 /usr/local/bin/python /BookwormDB/tests/test_formats.py
